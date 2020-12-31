@@ -4,6 +4,7 @@ import (
     "github.com/cemalkilic/jsonServer/controllers"
     "github.com/cemalkilic/jsonServer/database"
     "github.com/gin-gonic/gin"
+    "github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -12,7 +13,9 @@ func main() {
     database.Init()
     db := database.GetDB()
 
-    customEndpointController := new(controllers.CustomEndpointController)
+    v := validator.New()
+
+    customEndpointController := controllers.NewCustomEndpointController(db, v)
     customEndpointController.SetDB(db)
 
     // Default handler to handle user routes

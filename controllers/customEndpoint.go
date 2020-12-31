@@ -4,12 +4,20 @@ import (
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/service"
     "github.com/gin-gonic/gin"
-    "log"
+    "github.com/go-playground/validator/v10"
     "strings"
 )
 
 type CustomEndpointController struct {
     dataStore database.DataStore
+    validator *validator.Validate
+}
+
+func NewCustomEndpointController(db database.DataStore, v *validator.Validate) *CustomEndpointController {
+    return &CustomEndpointController{
+        dataStore: db,
+        validator: v,
+    }
 }
 
 func (cec *CustomEndpointController) SetDB(dataStore database.DataStore) {
@@ -18,11 +26,9 @@ func (cec *CustomEndpointController) SetDB(dataStore database.DataStore) {
 
 func (cec *CustomEndpointController) AddCustomEndpoint(c *gin.Context) {
     var addEndpointRequest service.AddEndpointParams
-    if c.ShouldBindJSON(&addEndpointRequest) == nil {
-        log.Println(addEndpointRequest)
-    }
+    _ = c.ShouldBindJSON(&addEndpointRequest)
 
-    srv := service.NewService(cec.dataStore)
+    srv := service.NewService(cec.dataStore, cec.validator)
     response, err := srv.AddEndpoint(addEndpointRequest)
     if err != nil {
         internalError(c, err)
@@ -41,7 +47,7 @@ func (cec *CustomEndpointController) AddCustomEndpoint(c *gin.Context) {
 func (cec *CustomEndpointController) GetCustomEndpoint(c *gin.Context) {
     url := c.Request.URL.Path
 
-    srv := service.NewService(cec.dataStore)
+    srv := service.NewService(cec.dataStore, cec.validator)
     response, err := srv.GetCustomEndpoint(service.GetEndpointParams{Endpoint: url})
     if err != nil {
         internalError(c, err)

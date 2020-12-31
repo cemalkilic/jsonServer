@@ -5,20 +5,28 @@ import (
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/models"
     "github.com/cemalkilic/jsonServer/utils"
+    "github.com/go-playground/validator/v10"
     "strings"
 )
 
 type jsonService struct {
     db database.DataStore
+    validate *validator.Validate
 }
 
-func NewService(db database.DataStore) *jsonService {
+func NewService(db database.DataStore, v *validator.Validate) *jsonService {
     return &jsonService{
         db: db,
+        validate: v,
     }
 }
 
 func (srv *jsonService) GetCustomEndpoint(params GetEndpointParams) (GetResponse, error) {
+
+    // Terminate the request if the input is not valid
+    if err := srv.validate.Struct(params); err != nil {
+        return GetResponse{}, err
+    }
 
     endpoint := strings.Trim(params.Endpoint, "/")
     urlParts := strings.Split(endpoint, "/")
@@ -43,6 +51,11 @@ func (srv *jsonService) GetCustomEndpoint(params GetEndpointParams) (GetResponse
 }
 
 func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointResponse, error) {
+    // Terminate the request if the input is not valid
+    if err := srv.validate.Struct(params); err != nil {
+       return AddEndpointResponse{}, err
+    }
+
     // Create a random username if not exists in the params
     username := params.Username
     if username == "" {

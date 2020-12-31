@@ -1,7 +1,7 @@
 package service
 
 type GetEndpointParams struct{
-    Endpoint string `json:"endpoint" binding:"required"`
+    Endpoint string `json:"endpoint" validate:"required"`
 }
 
 type GetResponse struct {
@@ -12,9 +12,9 @@ type GetResponse struct {
 
 type AddEndpointParams struct {
     Username   string `json:"username"`
-    Endpoint   string `json:"endpoint" binding:"required"`
-    Content    string `json:"content" binding:"required"`
-    StatusCode int    `json:"statusCode" binding:"required"`
+    Endpoint   string `json:"endpoint" validate:"required"`
+    Content    string `json:"content" validate:"required"`
+    StatusCode int    `json:"statusCode,string" validate:"required"`
 }
 
 type AddEndpointResponse struct {
