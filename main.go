@@ -5,10 +5,13 @@ import (
     "github.com/cemalkilic/jsonServer/database"
     "github.com/gin-gonic/gin"
     "github.com/go-playground/validator/v10"
+
+    "github.com/gin-contrib/cors"
 )
 
 func main() {
     router := gin.Default()
+    router.Use(cors.Default())
 
     database.Init()
     db := database.GetDB()
