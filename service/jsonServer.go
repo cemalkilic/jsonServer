@@ -2,6 +2,7 @@ package service
 
 import (
     "errors"
+    "fmt"
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/models"
     "github.com/cemalkilic/jsonServer/utils"
@@ -74,8 +75,11 @@ func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointRespon
         return AddEndpointResponse{}, err
     }
 
+    // Complete path of created endpoint
+    userEndpoint := fmt.Sprintf("%s/%s", username, params.Endpoint)
+
     return AddEndpointResponse{
-        Endpoint: params.Endpoint,
+        Endpoint: userEndpoint,
         Err:      nil,
     }, nil
 }
