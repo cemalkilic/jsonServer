@@ -3,10 +3,12 @@ package database
 import (
     "database/sql"
     "errors"
+    "fmt"
     "github.com/cemalkilic/jsonServer/models"
     "log"
+    "os"
 
-    _ "github.com/mattn/go-sqlite3"
+    _ "github.com/go-sql-driver/mysql"
 )
 
 type sqlDatabase struct {
@@ -17,12 +19,20 @@ var db DataStore
 
 func Init() {
 
-    sqliteDatabase, err := sql.Open("sqlite3", "./sqlite-database.db")
+    mysqlUsername := os.Getenv("MYSQL_USER")
+    mysqlPassword := os.Getenv("MYSQL_PASS")
+    mysqlDBName := os.Getenv("MYSQL_DB")
+    mysqlPort := os.Getenv("MYSQL_PORT")
+    mysqlHost := os.Getenv("MYSQL_HOST")
+
+    connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", mysqlUsername, mysqlPassword, mysqlHost, mysqlPort, mysqlDBName)
+
+    database, err := sql.Open("mysql", connStr)
     if err != nil {
         log.Fatal(err)
     }
 
-    db = &sqlDatabase{db: sqliteDatabase}
+    db = &sqlDatabase{db: database}
 }
 
 func GetDB() DataStore {
