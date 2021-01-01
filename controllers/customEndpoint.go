@@ -3,6 +3,7 @@ package controllers
 import (
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/service"
+    "github.com/cemalkilic/jsonServer/utils"
     "github.com/gin-gonic/gin"
     "github.com/go-playground/validator/v10"
     "strings"
@@ -39,8 +40,10 @@ func (cec *CustomEndpointController) AddCustomEndpoint(c *gin.Context) {
         internalError(c, e)
         return
     }
+
+    fullEndpointURL := utils.GetFullHTTPUrl(c.Request.Host, response.Endpoint, c.Request.TLS != nil)
     c.JSON(200, gin.H{
-        "endpoint": response.Endpoint,
+        "endpoint": fullEndpointURL,
     })
 }
 

@@ -1,6 +1,9 @@
 package utils
 
-import "math/rand"
+import (
+    "fmt"
+    "math/rand"
+)
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyz0123456789")
 
@@ -14,4 +17,12 @@ func randSeq(n int) string {
 
 func GetRandomUsername() string {
     return randSeq(8)
+}
+
+func GetFullHTTPUrl(host string, uri string, isSecure bool) string {
+    scheme := "http"
+    if isSecure {
+        scheme = "https"
+    }
+    return fmt.Sprintf("%s://%s/%s", scheme, host, uri)
 }
