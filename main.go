@@ -13,6 +13,8 @@ func main() {
     router := gin.Default()
     router.Use(cors.Default())
 
+    router.Static("/", "./frontend/build")
+
     database.Init()
     db := database.GetDB()
 
@@ -24,12 +26,6 @@ func main() {
     // Default handler to handle user routes
     router.NoRoute(customEndpointController.GetCustomEndpoint)
     router.POST("/addEndpoint", customEndpointController.AddCustomEndpoint)
-
-    router.GET("/ping", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "pong",
-        })
-    })
 
     router.Run() // serve on 0.0.0.0:8080
 }

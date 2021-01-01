@@ -1,0 +1,80 @@
+h1 {
+  display: table;
+  margin: 40px auto;
+  color: #fff;
+  font: 30px Helvetica;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  letter-spacing: 10px;
+}
+
+form {
+  display: table;
+  margin: 40px auto;
+
+  input,
+  textarea {
+    font: 18px Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+    display: block;
+    border: none;
+    padding: 20px;
+    width: 300px;
+    margin-top: 10px;
+    font-size: 18px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+
+    &::placeholder {
+      transition: all 0.2s ease-in-out;
+      color: #999;
+      font: 18px Helvetica, Arial, sans-serif;
+    }
+
+    &:focus,
+    &.populated {
+      padding-top: 28px;
+      padding-bottom: 12px;
+
+      &::placeholder {
+        color: transparent;
+      }
+    }
+  }
+
+  textarea {
+    height: 200px;
+  }
+
+  button {
+    transition: all 0.2s ease-in-out;
+    font: 18px Helvetica, Arial, sans-serif;
+    border: none;
+    background: #1792E8;
+    color: #fff;
+    margin-top: 10px;
+    padding: 20px;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+
+
+    &:hover {
+      background: #0e82d4;
+      cursor: pointer;
+    }
+  }
+
+  .error {
+    padding: 10px 0 10px 0;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    color: #ba3939;
+    background: #ffe0e0;
+    border: 1px solid #a33a3a;
+    display: inline-block;
+    width: 100%;
+   
+  }
+}
