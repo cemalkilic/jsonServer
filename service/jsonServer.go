@@ -60,10 +60,18 @@ func (srv *jsonService) GetCustomEndpoint(params GetEndpointParams) (GetResponse
 }
 
 func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointResponse, error) {
+    // Prepend with a slash to behave it like a uri
+    if !strings.HasPrefix(params.Endpoint, "/") {
+        params.Endpoint = "/" + params.Endpoint
+    }
+
     // Terminate the request if the input is not valid
     if err := srv.validate.Struct(params); err != nil {
        return AddEndpointResponse{}, err
     }
+
+    // Trim the slashes after validation :/ That's way easier than custom validation
+    params.Endpoint = strings.Trim(params.Endpoint, "/")
 
     // Create a random username if not exists in the params
     username := params.Username

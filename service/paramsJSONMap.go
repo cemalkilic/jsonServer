@@ -12,9 +12,9 @@ type GetResponse struct {
 
 type AddEndpointParams struct {
     Username   string `json:"username" validate:"omitempty,alphanum"`
-    Endpoint   string `json:"endpoint" validate:"required,alphanum"`
+    Endpoint   string `json:"endpoint" validate:"required,uri"`
     Content    string `json:"content" validate:"required"`
-    StatusCode int    `json:"statusCode,string" validate:"required,numeric"`
+    StatusCode int    `json:"statusCode" validate:"required,numeric"`
 }
 
 type AddEndpointResponse struct {
