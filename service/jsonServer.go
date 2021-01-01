@@ -30,8 +30,16 @@ func (srv *jsonService) GetCustomEndpoint(params GetEndpointParams) (GetResponse
     }
 
     endpoint := strings.Trim(params.Endpoint, "/")
+    if len(endpoint) == 0 {
+        return GetResponse{}, errors.New("empty URI given")
+    }
+
     urlParts := strings.Split(endpoint, "/")
     username := urlParts[0]
+    if len(urlParts[1:]) < 1 {
+      return GetResponse{}, errors.New("URI given without custom endpoint")
+    }
+
     userEndpoint := strings.Join(urlParts[1:], "/")
 
     customEndpoint, err := srv.db.Select(username, userEndpoint)
