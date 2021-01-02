@@ -3,10 +3,9 @@ package main
 import (
     "github.com/cemalkilic/jsonServer/controllers"
     "github.com/cemalkilic/jsonServer/database"
-    "github.com/gin-gonic/gin"
-    "github.com/go-playground/validator/v10"
-
+    "github.com/cemalkilic/jsonServer/utils/validator"
     "github.com/gin-contrib/cors"
+    "github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -18,7 +17,7 @@ func main() {
     database.Init()
     db := database.GetDB()
 
-    v := validator.New()
+    v := validator.NewValidator()
 
     customEndpointController := controllers.NewCustomEndpointController(db, v)
     customEndpointController.SetDB(db)
