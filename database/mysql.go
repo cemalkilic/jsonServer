@@ -3,17 +3,17 @@ package database
 import (
     "database/sql"
     "fmt"
+    "github.com/cemalkilic/jsonServer/config"
     "log"
-    "os"
 )
 
-func NewMySQLDBHandler() *sql.DB {
+func NewMySQLDBHandler(cfg *config.Config) *sql.DB {
 
-    mysqlUsername := os.Getenv("MYSQL_USER")
-    mysqlPassword := os.Getenv("MYSQL_PASS")
-    mysqlDBName := os.Getenv("MYSQL_DB")
-    mysqlPort := os.Getenv("MYSQL_PORT")
-    mysqlHost := os.Getenv("MYSQL_HOST")
+    mysqlUsername := cfg.MysqlUser
+    mysqlPassword := cfg.MysqlPass
+    mysqlDBName := cfg.MysqlDb
+    mysqlPort := cfg.MysqlPort
+    mysqlHost := cfg.MysqlHost
 
     connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", mysqlUsername, mysqlPassword, mysqlHost, mysqlPort, mysqlDBName)
 

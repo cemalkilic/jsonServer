@@ -1,6 +1,7 @@
 package main
 
 import (
+    "github.com/cemalkilic/jsonServer/config"
     "github.com/cemalkilic/jsonServer/controllers"
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/middlewares"
@@ -16,7 +17,9 @@ func main() {
 
     router.Static("/", "./frontend/build")
 
-    mysqlHandler := database.NewMySQLDBHandler()
+    cfg, _ := config.LoadConfig(".")
+
+    mysqlHandler := database.NewMySQLDBHandler(cfg)
     dataStore := database.GetSQLDataStore(mysqlHandler)
     userStore := database.GetSQLUserStore(mysqlHandler)
 
@@ -26,7 +29,7 @@ func main() {
     customEndpointController.SetDB(dataStore)
 
     loginService := service.DBLoginService(userStore, v)
-    jwtService := service.JWTAuthService()
+    jwtService := service.JWTAuthService(cfg)
     loginController := controllers.NewLoginController(loginService, jwtService)
 
     router.POST("/login", loginController.Login)
@@ -34,7 +37,7 @@ func main() {
 
     // Default handler to handle user routes
     router.NoRoute(customEndpointController.GetCustomEndpoint)
-    router.POST("/addEndpoint", middlewares.AuthorizeJWT, customEndpointController.AddCustomEndpoint)
+    router.POST("/addEndpoint", middlewares.AuthorizeJWT(jwtService), customEndpointController.AddCustomEndpoint)
 
-    router.Run() // serve on 0.0.0.0:8080
+    router.Run(cfg.ServerAddress)
 }

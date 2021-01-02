@@ -2,7 +2,7 @@ package service
 
 import (
     "errors"
-    "os"
+    "github.com/cemalkilic/jsonServer/config"
     "time"
 
     "github.com/dgrijalva/jwt-go"
@@ -23,19 +23,11 @@ type jwtServices struct {
     issuer    string
 }
 
-func JWTAuthService() JWTService {
+func JWTAuthService(cfg *config.Config) JWTService {
     return &jwtServices{
-        secretKey: getSecretKey(),
-        issuer:    "CK-JSONServer",
+        secretKey: cfg.JwtSecret,
+        issuer:    cfg.JwtIssuer,
     }
-}
-
-func getSecretKey() string {
-    secret := os.Getenv("SECRET")
-    if secret == "" {
-        secret = "mysecret"
-    }
-    return secret
 }
 
 func (service *jwtServices) GenerateToken(username string) (string, error) {
