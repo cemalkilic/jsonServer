@@ -6,16 +6,16 @@ import (
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/models"
     "github.com/cemalkilic/jsonServer/utils"
-    "github.com/go-playground/validator/v10"
+    "github.com/cemalkilic/jsonServer/utils/validator"
     "strings"
 )
 
 type jsonService struct {
     db database.DataStore
-    validate *validator.Validate
+    validate *validator.CustomValidator
 }
 
-func NewService(db database.DataStore, v *validator.Validate) *jsonService {
+func NewService(db database.DataStore, v *validator.CustomValidator) *jsonService {
     return &jsonService{
         db: db,
         validate: v,
@@ -25,7 +25,7 @@ func NewService(db database.DataStore, v *validator.Validate) *jsonService {
 func (srv *jsonService) GetCustomEndpoint(params GetEndpointParams) (GetResponse, error) {
 
     // Terminate the request if the input is not valid
-    if err := srv.validate.Struct(params); err != nil {
+    if err := srv.validate.ValidateStruct(params); err != nil {
         return GetResponse{}, err
     }
 
@@ -66,7 +66,7 @@ func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointRespon
     }
 
     // Terminate the request if the input is not valid
-    if err := srv.validate.Struct(params); err != nil {
+    if err := srv.validate.ValidateStruct(params); err != nil {
        return AddEndpointResponse{}, err
     }
 

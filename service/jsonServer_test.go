@@ -5,7 +5,7 @@ import (
     "fmt"
     "github.com/cemalkilic/jsonServer/models"
     "github.com/cemalkilic/jsonServer/service"
-    "github.com/go-playground/validator/v10"
+    "github.com/cemalkilic/jsonServer/utils/validator"
     "github.com/stretchr/testify/assert"
     "github.com/stretchr/testify/mock"
     "net/http"
@@ -56,7 +56,7 @@ func TestParseUsername(t *testing.T) {
     dbMock := &MockDB{}
     dbMock.On("Select", username, endpoint).Once()
 
-    validate := validator.New()
+    validate := validator.NewValidator()
     jsonService := service.NewService(dbMock, validate)
 
     response, err := jsonService.GetCustomEndpoint(service.GetEndpointParams{Endpoint: userEndpoint})
@@ -83,7 +83,7 @@ func TestOnlyUsernameShouldFail(t *testing.T) {
     userEndpoint := fmt.Sprintf("/%s", username)
 
     dbMock := MockDB{}
-    validate := validator.New()
+    validate := validator.NewValidator()
 
     jsonService := service.NewService(&dbMock, validate)
 
@@ -99,7 +99,7 @@ func TestEmptyUsernameShouldFail(t *testing.T) {
     userEndpoint := fmt.Sprintf("/%s", username)
 
     dbMock := MockDB{}
-    validate := validator.New()
+    validate := validator.NewValidator()
 
     jsonService := service.NewService(&dbMock, validate)
 
@@ -117,7 +117,7 @@ func TestJsonService_AddEndpoint_WithEmptyUsername(t *testing.T) {
 
     dbMock := MockDB{}
     dbMock.On("Insert").Return(nil).Once()
-    validate := validator.New()
+    validate := validator.NewValidator()
 
     jsonService := service.NewService(&dbMock, validate)
 
@@ -159,7 +159,7 @@ func TestJsonService_AddEndpoint_WithValidUsername(t *testing.T) {
 
     dbMock := MockDB{}
     dbMock.On("Insert").Return(nil).Once()
-    validate := validator.New()
+    validate := validator.NewValidator()
 
     jsonService := service.NewService(&dbMock, validate)
 

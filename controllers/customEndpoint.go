@@ -4,17 +4,17 @@ import (
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/service"
     "github.com/cemalkilic/jsonServer/utils"
+    "github.com/cemalkilic/jsonServer/utils/validator"
     "github.com/gin-gonic/gin"
-    "github.com/go-playground/validator/v10"
     "strings"
 )
 
 type CustomEndpointController struct {
     dataStore database.DataStore
-    validator *validator.Validate
+    validator *validator.CustomValidator
 }
 
-func NewCustomEndpointController(db database.DataStore, v *validator.Validate) *CustomEndpointController {
+func NewCustomEndpointController(db database.DataStore, v *validator.CustomValidator) *CustomEndpointController {
     return &CustomEndpointController{
         dataStore: db,
         validator: v,
