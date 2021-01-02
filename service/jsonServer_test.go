@@ -1,9 +1,10 @@
-package service
+package service_test
 
 import (
     "errors"
     "fmt"
     "github.com/cemalkilic/jsonServer/models"
+    "github.com/cemalkilic/jsonServer/service"
     "github.com/go-playground/validator/v10"
     "github.com/stretchr/testify/assert"
     "github.com/stretchr/testify/mock"
@@ -54,9 +55,9 @@ func TestParseUsername(t *testing.T) {
     dbMock.On("Select", username, endpoint).Once()
 
     validate := validator.New()
-    jsonService := NewService(dbMock, validate)
+    jsonService := service.NewService(dbMock, validate)
 
-    response, err := jsonService.GetCustomEndpoint(GetEndpointParams{Endpoint: userEndpoint})
+    response, err := jsonService.GetCustomEndpoint(service.GetEndpointParams{Endpoint: userEndpoint})
     if err != nil {
         t.Errorf("Error returned: %v", err)
     }
@@ -82,9 +83,9 @@ func TestOnlyUsernameShouldFail(t *testing.T) {
     dbMock := MockDB{}
     validate := validator.New()
 
-    jsonService := NewService(&dbMock, validate)
+    jsonService := service.NewService(&dbMock, validate)
 
-    _, err := jsonService.GetCustomEndpoint(GetEndpointParams{Endpoint: userEndpoint})
+    _, err := jsonService.GetCustomEndpoint(service.GetEndpointParams{Endpoint: userEndpoint})
     if err == nil {
         t.Errorf("Error not returned for non-uri")
     }
@@ -98,9 +99,9 @@ func TestEmptyUsernameShouldFail(t *testing.T) {
     dbMock := MockDB{}
     validate := validator.New()
 
-    jsonService := NewService(&dbMock, validate)
+    jsonService := service.NewService(&dbMock, validate)
 
-    _, err := jsonService.GetCustomEndpoint(GetEndpointParams{Endpoint: userEndpoint})
+    _, err := jsonService.GetCustomEndpoint(service.GetEndpointParams{Endpoint: userEndpoint})
     if err == nil {
         t.Errorf("Error not returned for empty username")
     }
