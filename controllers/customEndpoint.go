@@ -1,6 +1,7 @@
 package controllers
 
 import (
+    "fmt"
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/service"
     "github.com/cemalkilic/jsonServer/utils"
@@ -28,6 +29,11 @@ func (cec *CustomEndpointController) SetDB(dataStore database.DataStore) {
 func (cec *CustomEndpointController) AddCustomEndpoint(c *gin.Context) {
     var addEndpointRequest service.AddEndpointParams
     _ = c.ShouldBindJSON(&addEndpointRequest)
+
+    ctxUsername, exists := c.Get("username")
+    if exists {
+        addEndpointRequest.Username = fmt.Sprintf("%s", ctxUsername)
+    }
 
     srv := service.NewService(cec.dataStore, cec.validator)
     response, err := srv.AddEndpoint(addEndpointRequest)
