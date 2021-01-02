@@ -9,6 +9,7 @@ import (
     "github.com/stretchr/testify/assert"
     "github.com/stretchr/testify/mock"
     "net/http"
+    "strings"
     "testing"
 )
 
@@ -18,6 +19,7 @@ type MockDB struct {
 }
 
 func (db *MockDB) Insert(endpoint models.CustomEndpoint) error {
+    db.Called()
     return nil
 }
 
@@ -59,19 +61,19 @@ func TestParseUsername(t *testing.T) {
 
     response, err := jsonService.GetCustomEndpoint(service.GetEndpointParams{Endpoint: userEndpoint})
     if err != nil {
-        t.Errorf("Error returned: %v", err)
+        t.Fatalf("Error returned: %v", err)
     }
 
     dbMock.AssertExpectations(t)
 
     if response.StatusCode != http.StatusOK {
-        t.Errorf("handler returned wrong status code: got %v want %v", response.StatusCode, http.StatusOK)
+        t.Fatalf("handler returned wrong status code: got %v want %v", response.StatusCode, http.StatusOK)
     }
 
     assert.Equal(t, expectedContent, response.Content)
 
     if response.Err != nil {
-        t.Errorf("handler returned wrong status code: got %v want %v", response.Err, nil)
+        t.Fatalf("handler returned wrong status code: got %v want %v", response.Err, nil)
     }
 }
 
@@ -87,7 +89,7 @@ func TestOnlyUsernameShouldFail(t *testing.T) {
 
     _, err := jsonService.GetCustomEndpoint(service.GetEndpointParams{Endpoint: userEndpoint})
     if err == nil {
-        t.Errorf("Error not returned for non-uri")
+        t.Fatalf("Error not returned for non-uri")
     }
 }
 
@@ -103,6 +105,81 @@ func TestEmptyUsernameShouldFail(t *testing.T) {
 
     _, err := jsonService.GetCustomEndpoint(service.GetEndpointParams{Endpoint: userEndpoint})
     if err == nil {
-        t.Errorf("Error not returned for empty username")
+        t.Fatalf("Error not returned for empty username")
     }
+}
+
+func TestJsonService_AddEndpoint_WithEmptyUsername(t *testing.T) {
+    username := ""
+    endpoint := "myEndpoint"
+    content := `{"json":"content"}`
+    statusCode := 200
+
+    dbMock := MockDB{}
+    dbMock.On("Insert").Return(nil).Once()
+    validate := validator.New()
+
+    jsonService := service.NewService(&dbMock, validate)
+
+    response, err := jsonService.AddEndpoint(service.AddEndpointParams{
+        Username:   username,
+        Endpoint:   endpoint,
+        Content:    content,
+        StatusCode: statusCode,
+    })
+
+    if err != nil {
+        t.Fatalf("Error returned for empty username, it should create a random username")
+    }
+
+    dbMock.AssertExpectations(t)
+
+    // Returned endpoint must have a random username prepended
+    firstSlashIndex := strings.Index(response.Endpoint, "/")
+    if firstSlashIndex == -1 {
+        t.Fatalf("No slash found in the created endpoint!")
+    }
+
+    if response.Err != nil {
+        t.Fatalf("Error should not be returned on response!")
+    }
+
+    usernameResp := response.Endpoint[:firstSlashIndex]
+    endpointResp := response.Endpoint[firstSlashIndex +1 :]
+
+    assert.Greater(t, len(usernameResp), 1, "Created username should not be empty")
+    assert.Equal(t, endpoint, endpointResp, "Created endpoint must be the same with the given")
+}
+
+func TestJsonService_AddEndpoint_WithValidUsername(t *testing.T) {
+    username := "myUser"
+    endpoint := "my/test/endpoint"
+    content := `{"json":"content"}`
+    statusCode := 200
+
+    dbMock := MockDB{}
+    dbMock.On("Insert").Return(nil).Once()
+    validate := validator.New()
+
+    jsonService := service.NewService(&dbMock, validate)
+
+    response, err := jsonService.AddEndpoint(service.AddEndpointParams{
+        Username:   username,
+        Endpoint:   endpoint,
+        Content:    content,
+        StatusCode: statusCode,
+    })
+
+    if err != nil {
+        t.Fatalf("Error returned for empty username, it should create a random username")
+    }
+
+    if response.Err != nil {
+        t.Fatalf("Error should not be returned on response!")
+    }
+
+    dbMock.AssertExpectations(t)
+
+    expectedCreatedEndpoint := fmt.Sprintf("%s/%s", username, endpoint)
+    assert.Equal(t, expectedCreatedEndpoint, response.Endpoint, "Created endpoint must be equal to the given")
 }
