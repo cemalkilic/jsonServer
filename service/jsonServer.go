@@ -79,6 +79,16 @@ func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointRespon
         username = utils.GetRandomUsername()
     }
 
+    // Make sure the same endpoint does not already exist
+    response, err := srv.db.Select(username, params.Endpoint)
+    if err != nil {
+        return AddEndpointResponse{}, err
+    }
+
+    if response.Username != "" {
+        return AddEndpointResponse{}, errors.New("endpoint already exists")
+    }
+
     endpointObj := models.CustomEndpoint{
         Username:   username,
         URI:        params.Endpoint,
@@ -86,7 +96,7 @@ func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointRespon
         StatusCode: params.StatusCode,
     }
 
-    err := srv.db.Insert(endpointObj)
+    err = srv.db.Insert(endpointObj)
     if err != nil {
         return AddEndpointResponse{}, err
     }
