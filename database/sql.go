@@ -3,40 +3,26 @@ package database
 import (
     "database/sql"
     "errors"
-    "fmt"
     "github.com/cemalkilic/jsonServer/models"
-    "log"
-    "os"
-
     _ "github.com/go-sql-driver/mysql"
+    "log"
+    "time"
 )
 
 type sqlDatabase struct {
     db *sql.DB
 }
 
-var db DataStore
-
-func Init() {
-
-    mysqlUsername := os.Getenv("MYSQL_USER")
-    mysqlPassword := os.Getenv("MYSQL_PASS")
-    mysqlDBName := os.Getenv("MYSQL_DB")
-    mysqlPort := os.Getenv("MYSQL_PORT")
-    mysqlHost := os.Getenv("MYSQL_HOST")
-
-    connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", mysqlUsername, mysqlPassword, mysqlHost, mysqlPort, mysqlDBName)
-
-    database, err := sql.Open("mysql", connStr)
-    if err != nil {
-        log.Fatal(err)
+func GetSQLDataStore(db *sql.DB) DataStore {
+    return &sqlDatabase{
+        db: db,
     }
-
-    db = &sqlDatabase{db: database}
 }
 
-func GetDB() DataStore {
-    return db
+func GetSQLUserStore(db *sql.DB) UserStore {
+    return &sqlDatabase{
+        db: db,
+    }
 }
 
 func (s *sqlDatabase) Insert(endpoint models.CustomEndpoint) error {
@@ -99,3 +85,47 @@ func (s *sqlDatabase) Delete(id int) error {
     return errors.New("in Delete")
 }
 
+func (s *sqlDatabase) InsertUser(user models.User) error {
+    insertUserSql := `INSERT INTO users(username, password, createdAt) VALUES (?, ?, ?)`
+    statement, err := s.db.Prepare(insertUserSql)
+    if err != nil {
+        log.Fatal(err)
+        return err
+    }
+
+    _, err = statement.Exec(user.Username, user.Password, user.CreatedAt)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func (s *sqlDatabase) SelectByUsername(uname string) (models.User, error) {
+    rows, err := s.db.Query(`SELECT * FROM users WHERE username = ? LIMIT 1`, uname)
+    if err != nil {
+        return models.User{}, err
+    }
+
+    defer rows.Close()
+
+    var id string
+    var username string
+    var password string
+    var createdAt time.Time
+
+    for rows.Next() {
+        _ = rows.Scan(&id, &username, &password, &createdAt)
+
+    }
+
+    if err := rows.Err(); err != nil {
+        return models.User{}, err
+    }
+
+    return models.User{
+        Username: username,
+        Password: password,
+        CreatedAt: createdAt,
+    }, nil
+}

@@ -49,3 +49,26 @@ func (controller *LoginController) Login(c *gin.Context) {
         "token": token,
     })
 }
+
+func (controller *LoginController) Signup(c *gin.Context) {
+    var credential models.User
+    err := c.ShouldBindJSON(&credential)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": "Signup data must be a valid JSON!",
+        })
+        return
+    }
+
+    err = controller.loginService.Signup(credential)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{
+        "message": "success",
+    })
+}

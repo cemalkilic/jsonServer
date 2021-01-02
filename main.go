@@ -16,20 +16,21 @@ func main() {
 
     router.Static("/", "./frontend/build")
 
-    database.Init()
-    db := database.GetDB()
+    mysqlHandler := database.NewMySQLDBHandler()
+    dataStore := database.GetSQLDataStore(mysqlHandler)
+    userStore := database.GetSQLUserStore(mysqlHandler)
 
     v := validator.NewValidator()
 
-    customEndpointController := controllers.NewCustomEndpointController(db, v)
-    customEndpointController.SetDB(db)
+    customEndpointController := controllers.NewCustomEndpointController(dataStore, v)
+    customEndpointController.SetDB(dataStore)
 
-
-    loginService := service.StaticLoginService()
+    loginService := service.DBLoginService(userStore, v)
     jwtService := service.JWTAuthService()
     loginController := controllers.NewLoginController(loginService, jwtService)
 
     router.POST("/login", loginController.Login)
+    router.POST("/signup", loginController.Signup)
 
     // Default handler to handle user routes
     router.NoRoute(customEndpointController.GetCustomEndpoint)

@@ -11,3 +11,8 @@ type DataStore interface {
     SelectAllByUser(username string) ([]models.CustomEndpoint, error)
     Delete(id int) error
 }
+
+type UserStore interface {
+    InsertUser(user models.User) error
+    SelectByUsername(username string) (models.User, error)
+}
