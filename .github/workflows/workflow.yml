@@ -1,0 +1,34 @@
+name: JSONServer
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.15.0'
+
+      - name: Install dependencies
+        run: |
+          go version
+          go get -u golang.org/x/lint/golint
+
+      - name: Run vet & lint
+        run: |
+          go vet ./...
+          golint ./...
+
+      - name: Run testing
+        run: go test ./...
+
+      - name: Run build
+        run: go build ./cmd
