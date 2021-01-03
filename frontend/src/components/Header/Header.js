@@ -9,11 +9,12 @@ function Header(props) {
     }
     let title = capitalize(props.location.pathname.substring(1, props.location.pathname.length))
     if (props.location.pathname === '/') {
-        title = 'Welcome'
+        title = 'Home'
     }
 
     function renderLogout() {
-        if (props.location.pathname === '/home') {
+        const token = localStorage.getItem(ACCESS_TOKEN_NAME);
+        if (props.location.pathname === '/' && token) {
             return (
                 <div className="ml-auto">
                     <button className="btn btn-danger" onClick={() => handleLogout()}>Logout</button>
@@ -28,7 +29,9 @@ function Header(props) {
     }
 
     function renderLogin() {
-        if (props.location.pathname === '/') {
+        // dummy login check by looking the local storage
+        const token = localStorage.getItem(ACCESS_TOKEN_NAME);
+        if (props.location.pathname === '/' && !token) {
             return (
                 <div className="ml-auto">
                     <button className="btn btn-primary" onClick={() => handleLogin()}>Login</button>
@@ -41,10 +44,26 @@ function Header(props) {
         props.history.push('/login')
     }
 
+    function renderHome() {
+        if (props.location.pathname === '/login' || props.location.pathname === '/register') {
+            return (
+                <div className="ml-auto">
+                    <button className="btn btn-primary" onClick={() => handleHome()}>Home</button>
+                </div>
+            )
+        }
+    }
+
+    function handleHome() {
+        props.history.push('/')
+        title = 'Home'
+    }
+
     return (
         <nav className="navbar navbar-dark bg-primary">
             <div className="row col-12 d-flex justify-content-center text-white">
-                <span className="h3">{props.title || title}</span>
+                <span className="h3">{title || props.title}</span>
+                {renderHome()}
                 {renderLogout()}
                 {renderLogin()}
             </div>
