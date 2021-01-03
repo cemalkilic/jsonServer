@@ -7,6 +7,7 @@ import Home from './components/Home/Home';
 import PrivateRoute from './utils/PrivateRoute';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import AlertComponent from './components/AlertComponent/AlertComponent';
+import NewEndpointForm from "./components/NewEndpoint/NewEndpoint";
 
 function App() {
     const [title, updateTitle] = useState(null);
@@ -18,7 +19,7 @@ function App() {
                 <div className="container d-flex align-items-center flex-column">
                     <Switch>
                         <Route path="/" exact={true}>
-                            <RegistrationForm showError={updateErrorMessage} updateTitle={updateTitle}/>
+                            <NewEndpointForm showError={updateErrorMessage} updateTitle={updateTitle}/>
                         </Route>
                         <Route path="/register">
                             <RegistrationForm showError={updateErrorMessage} updateTitle={updateTitle}/>

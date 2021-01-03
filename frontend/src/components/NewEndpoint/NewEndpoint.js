@@ -4,7 +4,7 @@ import './styled.scss'
 import {ACCESS_TOKEN_NAME} from "../../constants/apiConstants";
 
 const buildState = () => ({
-  endpoint: "test/my/endpoint",
+  endpoint: "test/my/endpoint" + Math.floor(Math.random() * 169) + 13,
   content: `{
     "_id": "5fef60d16b19c93c8a736c8b",
     "isActive": true,
@@ -14,13 +14,18 @@ const buildState = () => ({
   statusCode: 200,
 });
 
-const NewEndpointForm = () => {
+const NewEndpointForm = (props) => {
   const [formData, setFormData] = useState(buildState())
+  const [createdEndpoint, setCreatedEndpoint] = useState({})
+
+  const refreshFormData = () => {
+    setFormData({
+      ...buildState()
+    })
+  }
 
   const updateCreatedEndpoint = endpoint => {
-    setFormData({
-      resultEndpoint: endpoint
-    })
+    setCreatedEndpoint({ endpoint: endpoint} )
   }
 
   const updateInput = e => {
@@ -67,14 +72,15 @@ const NewEndpointForm = () => {
     )
       .then(res => {
         updateCreatedEndpoint(res.data.endpoint)
+        props.showError(null)
       })
       .catch(error => {
-        console.log(error.response)
-        setFormData({
-          ...formData,
-          error: error.response.data.error
-        })
+        updateCreatedEndpoint(null)
+        const errorMessage = error.response.data.error || 'API Error!'
+        props.showError(errorMessage)
       })
+
+    refreshFormData()
   }
 
   return (
@@ -107,12 +113,21 @@ const NewEndpointForm = () => {
 
         {formData.error && <span className="error">{formData.error}</span>}
 
-        <button type="submit">Submit</button>
+        <button type="submit">Create Endpoint</button>
 
-        <textarea
-            readOnly={true}
-            value={formData.resultEndpoint || 'Created endpoint will be here!'}
-        />
+        <div className={"alert-width"}>
+        <div
+            style={{display: createdEndpoint.endpoint ? 'block' : 'none'}}
+            className={"alert alert-success"}
+        >
+          <a href={createdEndpoint.endpoint} target={"blank"} className="alert-link">Click</a> and see it in action!
+          <textarea
+              className={"createdEndpoint"}
+              readOnly={true}
+              value={createdEndpoint.endpoint || 'Created endpoint will be here!'}
+          />
+        </div>
+        </div>
       </form>
     </>
   )

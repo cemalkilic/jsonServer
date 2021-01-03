@@ -27,11 +27,26 @@ function Header(props) {
         props.history.push('/login')
     }
 
+    function renderLogin() {
+        if (props.location.pathname === '/') {
+            return (
+                <div className="ml-auto">
+                    <button className="btn btn-primary" onClick={() => handleLogin()}>Login</button>
+                </div>
+            )
+        }
+    }
+
+    function handleLogin() {
+        props.history.push('/login')
+    }
+
     return (
         <nav className="navbar navbar-dark bg-primary">
             <div className="row col-12 d-flex justify-content-center text-white">
                 <span className="h3">{props.title || title}</span>
                 {renderLogout()}
+                {renderLogin()}
             </div>
         </nav>
     )

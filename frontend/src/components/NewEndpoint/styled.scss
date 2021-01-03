@@ -19,7 +19,7 @@ h1 {
     display: block;
     border: none;
     padding: 20px;
-    width: 300px;
+    width: 350px;
     margin-top: 10px;
     font-size: 18px;
     outline: none;
@@ -46,6 +46,11 @@ h1 {
     height: 200px;
   }
 
+  textarea.createdEndpoint {
+    height: 90px;
+    width: 100%;
+  }
+
   button {
     transition: all 0.2s ease-in-out;
     font: 18px Helvetica, Arial, sans-serif;
@@ -53,6 +58,7 @@ h1 {
     background: #1792E8;
     color: #fff;
     margin-top: 10px;
+    margin-bottom: 20px;
     padding: 20px;
     width: 100%;
     text-transform: uppercase;
@@ -65,16 +71,7 @@ h1 {
     }
   }
 
-  .error {
-    padding: 10px 0 10px 0;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    font-size: 18px;
-    color: #ba3939;
-    background: #ffe0e0;
-    border: 1px solid #a33a3a;
-    display: inline-block;
+  .alert-width {
     width: 100%;
-   
   }
 }
