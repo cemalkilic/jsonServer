@@ -31,4 +31,4 @@ jobs:
         run: go test ./...
 
       - name: Run build
-        run: go build ./cmd
+        run: go build -o ./main ./cmd
