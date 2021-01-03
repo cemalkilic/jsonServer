@@ -15,7 +15,8 @@ func main() {
     router := gin.Default()
     router.Use(cors.Default())
 
-    router.Static("/", "./frontend/build")
+    router.StaticFile("/", "./frontend/build/index.html")
+    router.Static("/static", "./frontend/build/static")
 
     cfg, _ := config.LoadConfig(".")
 
@@ -34,6 +35,11 @@ func main() {
 
     router.POST("/login", loginController.Login)
     router.POST("/signup", loginController.Signup)
+    router.GET("/user/me", middlewares.AuthorizeJWT(jwtService), func(context *gin.Context) {
+        context.JSON(200, gin.H{
+            "success": true,
+        })
+    })
 
     // Default handler to handle user routes
     router.NoRoute(customEndpointController.GetCustomEndpoint)

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import './styled.scss'
+import {ACCESS_TOKEN_NAME} from "../../constants/apiConstants";
 
 const buildState = () => ({
   endpoint: "test/my/endpoint",
@@ -18,7 +19,6 @@ const NewEndpointForm = () => {
 
   const updateCreatedEndpoint = endpoint => {
     setFormData({
-
       resultEndpoint: endpoint
     })
   }
@@ -54,9 +54,15 @@ const NewEndpointForm = () => {
   }
 
   const createEndpoint = () => {
+    const payload = {
+      "content": formData.content,
+      "endpoint": formData.endpoint,
+      "statusCode": formData.statusCode,
+    }
     axios.post(
       '/addEndpoint',
-      formData
+        payload,
+        {headers: {'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN_NAME)}}
     )
       .then(res => {
         updateCreatedEndpoint(res.data.endpoint)
@@ -72,10 +78,11 @@ const NewEndpointForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form className="newEndpointForm" onSubmit={handleSubmit}>
         <input
           type="text"
           name="endpoint"
+          required={true}
           placeholder="Endpoint"
           onChange={updateInput}
           value={formData.endpoint || ''}
@@ -83,6 +90,7 @@ const NewEndpointForm = () => {
         <input
             type="number"
             name="statusCode"
+            required={true}
             placeholder="Status Code"
             onChange={updateInput}
             value={formData.statusCode || ''}
@@ -90,6 +98,7 @@ const NewEndpointForm = () => {
         <textarea
             type="text"
             name="content"
+            required={true}
             placeholder="JSON Content"
             onChange={updateInput}
             value={formData.content || ''}
