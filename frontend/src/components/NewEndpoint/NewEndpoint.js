@@ -59,10 +59,11 @@ const NewEndpointForm = () => {
       "endpoint": formData.endpoint,
       "statusCode": formData.statusCode,
     }
+    const token = localStorage.getItem(ACCESS_TOKEN_NAME);
     axios.post(
       '/addEndpoint',
         payload,
-        {headers: {'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN_NAME)}}
+        token ? {headers: {'Authorization': 'Bearer ' + token}} : {}
     )
       .then(res => {
         updateCreatedEndpoint(res.data.endpoint)

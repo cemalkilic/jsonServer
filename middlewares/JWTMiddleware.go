@@ -16,17 +16,23 @@ func AuthorizeJWT(jwtService service.JWTService) gin.HandlerFunc{
 
         authHeader := c.GetHeader("Authorization")
         if authHeader == "" {
+            return
+            /*
             c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
                 "error": "Authorization token is not given!",
             })
             return
+            */
         }
 
         if !strings.HasPrefix(authHeader, BearerSchema) {
+            return
+            /*
             c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
                 "error": "Authorization token must be type of Bearer!",
             })
             return
+            */
         }
 
         tokenString := authHeader[len(BearerSchema):]
