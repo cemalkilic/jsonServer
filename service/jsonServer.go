@@ -5,7 +5,6 @@ import (
     "fmt"
     "github.com/cemalkilic/jsonServer/database"
     "github.com/cemalkilic/jsonServer/models"
-    "github.com/cemalkilic/jsonServer/utils"
     "github.com/cemalkilic/jsonServer/utils/validator"
     "strings"
 )
@@ -73,10 +72,10 @@ func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointRespon
     // Trim the slashes after validation :/ That's way easier than custom validation
     params.Endpoint = strings.Trim(params.Endpoint, "/")
 
-    // Create a random username if not exists in the params
+    // Use the default username if not exists in the params
     username := params.Username
     if username == "" {
-        username = utils.GetRandomUsername()
+        username = "guest"
     }
 
     // Make sure the same endpoint does not already exist
@@ -85,7 +84,7 @@ func (srv *jsonService) AddEndpoint(params AddEndpointParams) (AddEndpointRespon
         return AddEndpointResponse{}, err
     }
 
-    if response.Username != "" {
+    if response.ID != 0 {
         return AddEndpointResponse{}, errors.New("endpoint already exists")
     }
 
