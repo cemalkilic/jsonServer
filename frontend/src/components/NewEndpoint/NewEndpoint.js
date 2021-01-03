@@ -6,10 +6,12 @@ import {ACCESS_TOKEN_NAME} from "../../constants/apiConstants";
 const buildState = () => ({
   endpoint: "test/my/endpoint" + Math.floor(Math.random() * 169) + 13,
   content: `{
-    "_id": "5fef60d16b19c93c8a736c8b",
-    "isActive": true,
-    "balance": "$1,340.01",
-    "picture": "http://placehold.it/32x32"
+    "name": "Luke Skywalker",
+    "height": "172",
+    "skin_color": "fair",
+    "eye_color": "blue",
+    "birth_year": "19BBY",
+    "homeworld": "Tatooine"
 }`,
   statusCode: 200,
 });
