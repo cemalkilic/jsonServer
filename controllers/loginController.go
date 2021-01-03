@@ -68,7 +68,17 @@ func (controller *LoginController) Signup(c *gin.Context) {
         return
     }
 
+    // Return the token to user, to let her login right after signup
+    token, err := controller.jWtService.GenerateToken(credential.Username)
+    if err != nil {
+        c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+
     c.JSON(http.StatusOK, gin.H{
         "message": "success",
+        "token": token,
     })
 }
